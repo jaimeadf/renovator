@@ -61,32 +61,32 @@ def renew_borrowing(session: Session, id: str) -> None:
 
 parser = ArgumentParser(
     prog='Renovator',
-    description='Renova livros da UFSM automaticamente pelo portal estudantil'
+    description='Renova livros da UFSM automaticamente pelo portal estudantil.'
 )
 
-parser.add_argument('-u --username', dest='username', help='Sua matrícula para o portal')
-parser.add_argument('-p --password', dest='password', help='Sua senha para o portal')
+parser.add_argument('-u --username', dest='username', help='Sua matrícula para o portal.')
+parser.add_argument('-p --password', dest='password', help='Sua senha para o portal.')
 
 args = parser.parse_args()
 session = Session()
 
 try:
-    print('Logging in...')
+    print('Logando...')
     login(session, args.username, args.password)
 except Exception as exception:
-    print(f'Failed to log in: {str(exception)}')
+    print(f'Ocorreu um erro ao logar: {str(exception)}')
 else:
-    print('Scraping borrowings...')
+    print('Extraindo empréstimos...')
     borrowings = scrape_borrowings(session)
 
-    print(f'Found {len(borrowings)} borrowings.')
+    print(f'{len(borrowings)} empréstimos foram encontrados.')
 
     for borrowing in borrowings:
-        print(f"Renewing {borrowing['id']} {borrowing['title']} - {borrowing['library']}...")
+        print(f"Renovando {borrowing['id']} {borrowing['title']} - {borrowing['library']}...")
 
         try:
             renew_borrowing(session, borrowing['id'])
-            print(f"Successfully renewed {borrowing['id']} {borrowing['title']} - {borrowing['library']}.")
+            print(f"{borrowing['id']} {borrowing['title']} - {borrowing['library']} foi renovado com sucesso.")
         except Exception as exception:
-            print(f"Unable to renew {borrowing['id']} {borrowing['title']} - {borrowing['library']}: {str(exception)}")
+            print(f"{borrowing['id']} {borrowing['title']} - {borrowing['library']} não pode ser renovado: {str(exception)}")
 
