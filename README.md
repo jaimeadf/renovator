@@ -9,7 +9,7 @@ Um pequeno script escrito em [Python](https://www.python.org/) que renova automa
 ![image](https://user-images.githubusercontent.com/40345645/235337715-f92b9243-499d-4640-ae39-3e070b882257.png)
 4. Lá, adicione duas secrets:
 - `Username` contendo sua matrícula.
-- `Password` content sua senha do portal.
+- `Password` contendo sua senha do portal.
 ![image](https://user-images.githubusercontent.com/40345645/235337747-6f7a2f7b-804e-48e5-88db-372131f48464.png)
 5. Pronto, agora seus livros irão ser renovados diariamente. Na aba `Actions`, você pode ver as logs da execução e rodar o script antes do prazo determinado.
 
