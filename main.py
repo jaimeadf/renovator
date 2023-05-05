@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from requests import Session
 from argparse import ArgumentParser
 from bs4 import BeautifulSoup
@@ -42,6 +43,8 @@ def scrape_borrowings(session: Session) -> list[dict]:
             'code': cells[1].text.strip(),
             'title': cells[2].text.strip(),
             'library': cells[3].text.strip(),
+            'withdrawnAt': cells[4].text.strip(),
+            'returnAt': cells[5].text.strip(),
             'renewals': int(cells[6].text)
         })
 
@@ -58,6 +61,11 @@ def renew_borrowing(session: Session, id: str) -> None:
 
     if error:
         raise Exception(error.text.strip())
+
+def should_renew(borrowing: dict) -> None:
+    today = date.today()
+
+    return borrowing['returnAt'] == today.strftime('%d/%m/%Y')
 
 parser = ArgumentParser(
     prog='Renovator',
@@ -82,11 +90,13 @@ else:
     print(f'{len(borrowings)} empréstimos foram encontrados.')
 
     for borrowing in borrowings:
-        print(f"Renovando {borrowing['id']} {borrowing['title']} - {borrowing['library']}...")
+        if should_renew(borrowing):
+            print(f"Renovando {borrowing['id']} {borrowing['title']} - {borrowing['library']}...")
 
-        try:
-            renew_borrowing(session, borrowing['id'])
-            print(f"{borrowing['id']} {borrowing['title']} - {borrowing['library']} foi renovado com sucesso.")
-        except Exception as exception:
-            print(f"{borrowing['id']} {borrowing['title']} - {borrowing['library']} não pode ser renovado: {str(exception)}")
-
+            try:
+                renew_borrowing(session, borrowing['id'])
+                print(f"{borrowing['id']} {borrowing['title']} - {borrowing['library']} foi renovado com sucesso.")
+            except Exception as exception:
+                print(f"{borrowing['id']} {borrowing['title']} - {borrowing['library']} não pode ser renovado: {str(exception)}")
+        else:
+            print(f"Pulando {borrowing['id']} {borrowing['title']} - {borrowing['library']}, pois a renovação não gera benefício.")
